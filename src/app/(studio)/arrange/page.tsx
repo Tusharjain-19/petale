@@ -15,7 +15,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useBouquetStore, type ArrangedFlower } from "../../../store/useBouquetStore";
+import { useBouquetStore } from "../../../store/useBouquetStore";
 import { BACKGROUNDS, FLOWERS, WRAPS, arrangeInitialBouquet } from "@/lib/flowers";
 
 export default function ArrangePage() {
@@ -37,13 +37,14 @@ export default function ArrangePage() {
   const [selectedInstanceId, setSelectedInstanceId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [mobileTab, setMobileTab] = useState<'bg' | 'foliage' | 'wrap'>('bg');
 
   // Responsive scale for the canvas
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 640) setScale(0.6);
-      else if (width < 1024) setScale(0.8);
+      if (width < 640) setScale(0.65);
+      else if (width < 1024) setScale(0.85);
       else setScale(1);
     };
     handleResize();
@@ -60,7 +61,7 @@ export default function ArrangePage() {
     }
   }, [selectedFlowers, arrangedFlowers, setArrangedFlowers, router]);
 
-  const handleDragEnd = (id: string, info: any) => {
+  const handleDragEnd = (id: string, info: { offset: { x: number; y: number } }) => {
     const flower = arrangedFlowers.find(f => f.instanceId === id);
     if (!flower) return;
     
@@ -94,10 +95,8 @@ export default function ArrangePage() {
     updateFlowerTransform(selectedInstanceId, { zIndex: maxZ + 1 });
   };
 
-  const selectedFlower = arrangedFlowers.find(f => f.instanceId === selectedInstanceId);
-
   return (
-    <main className="min-h-screen pt-24 pb-32 flex flex-col items-center">
+    <main className="min-h-screen pt-24 pb-48 lg:pb-32 flex flex-col items-center overflow-x-hidden">
       {/* Background Layer */}
       <div className="fixed inset-0 -z-10 transition-colors duration-700 overflow-hidden" style={{ backgroundColor: background.startsWith('#') ? background : 'transparent' }}>
         {!background.startsWith('#') && (
@@ -112,7 +111,7 @@ export default function ArrangePage() {
         <div className="absolute inset-0 bg-[#2C2420]/5 pointer-events-none" />
       </div>
 
-      <div className="w-full max-w-7xl px-4 flex flex-col lg:flex-row gap-8 items-start">
+      <div className="w-full max-w-7xl px-4 flex flex-col lg:flex-row gap-8 items-start relative z-10">
         
         {/* Left: Floating Sidebar (Desktop) */}
         <div className="hidden lg:flex flex-col gap-6 w-80 shrink-0 sticky top-24">
@@ -162,9 +161,6 @@ export default function ArrangePage() {
                   </button>
                 ))}
               </div>
-              <p className="text-[9px] text-[#2C2420]/30 italic leading-tight">
-                Add soft watercolor greenery to frame and balance your bouquet. 
-              </p>
             </div>
 
             <div className="space-y-4">
@@ -211,43 +207,39 @@ export default function ArrangePage() {
                   </button>
                 ))}
               </div>
-              <p className="text-[9px] text-[#2C2420]/30 italic leading-tight">
-                Premium matte wrap frames your bouquet for a luxury finish.
-              </p>
             </div>
           </div>
         </div>
 
-        {/* Center: Interactive Canvas */}
-        <div className="flex-1 w-full bg-white/30 backdrop-blur-sm rounded-[3rem] border border-white/50 relative overflow-hidden h-[500px] md:h-[600px] shadow-inner">
+        {/* Center/Right: Interactive Canvas */}
+        <div className="flex-1 w-full bg-white/30 backdrop-blur-sm rounded-[3rem] border border-white/50 relative h-[500px] md:h-[650px] shadow-inner mb-4">
            {/* Mobile Toolbar */}
-           <div className="lg:hidden absolute top-4 left-4 right-4 z-30 flex justify-between items-center bg-white/60 backdrop-blur-md p-3 rounded-2xl border border-white/40">
+           <div className="lg:hidden absolute top-4 left-4 right-4 z-30 flex justify-between items-center bg-white/60 backdrop-blur-md p-2 rounded-2xl border border-white/40">
               <button 
                  onClick={() => router.push("/flowers")}
-                 className="flex items-center gap-2 text-xs font-medium text-[#2C2420]/70"
+                 className="flex items-center gap-2 text-xs font-semibold text-[#2C2420]/80 px-3 py-1.5"
               >
-                 <Plus className="w-4 h-4" /> Flowers
+                 <Plus className="w-3.5 h-3.5" /> Flowers
               </button>
               <div className="flex gap-2">
                 <button 
                    onClick={() => setArrangedFlowers(arrangeInitialBouquet(selectedFlowers))}
-                   className="p-2 rounded-xl bg-[#FAF7F2]"
+                   className="p-2 rounded-xl bg-[#FAF7F2] border border-[#2C2420]/5"
                 >
-                   <RotateCcw className="w-4 h-4 text-[#2C2420]/70" />
+                   <RotateCcw className="w-3.5 h-3.5 text-[#2C2420]/70" />
                 </button>
               </div>
            </div>
 
            <div 
              ref={containerRef}
-             className="absolute inset-0 flex items-center justify-center touch-none"
+             className="absolute inset-0 flex items-center justify-center touch-none overflow-hidden"
              onClick={() => setSelectedInstanceId(null)}
            >
              <div 
                 className="relative w-[500px] h-[500px]"
                 style={{ transform: `scale(${scale})` }}
              >
-                {/* Bouquet Wrap Layer (Back) */}
                 {/* Bouquet Wrap Back Layer */}
                 <AnimatePresence>
                   {wrap !== "none" && (
@@ -262,7 +254,7 @@ export default function ArrangePage() {
                         alt="Wrap Back" 
                         width={500} 
                         height={500} 
-                        className="object-contain opacity-100"
+                        className="object-contain"
                         priority
                       />
                     </motion.div>
@@ -288,18 +280,19 @@ export default function ArrangePage() {
                         alt="Wrap Front" 
                         width={500} 
                         height={500} 
-                        className="object-contain opacity-100"
+                        className="object-contain"
                         priority
                       />
                     </motion.div>
                   )}
                 </AnimatePresence>
+
                 {/* Guide Text */}
-                <p className="absolute -top-12 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-widest text-[#2C2420]/30 font-sans whitespace-nowrap">
+                <p className="absolute -top-12 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-[#2C2420]/25 font-bold font-sans whitespace-nowrap hidden sm:block">
                    Drag to move • Tap to edit
                 </p>
 
-                {arrangedFlowers.map((f) => {
+                {arrangedFlowers.sort((a,b) => a.zIndex - b.zIndex).map((f) => {
                   const isSelected = selectedInstanceId === f.instanceId;
                   return (
                     <motion.div
@@ -311,7 +304,7 @@ export default function ArrangePage() {
                         e.stopPropagation();
                         setSelectedInstanceId(f.instanceId);
                       }}
-                      whileDrag={{ scale: f.scale * 1.1, zIndex: 1000 }}
+                      whileDrag={{ scale: f.scale * 1.05, zIndex: 1000 }}
                       style={{
                         position: "absolute",
                         left: "50%",
@@ -325,28 +318,28 @@ export default function ArrangePage() {
                         transformOrigin: "center center"
                       }}
                     >
-                      {/* On-Canvas Controls (Only visible when selected) */}
+                      {/* On-Canvas Controls */}
                       <AnimatePresence>
                         {isSelected && (
                           <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className="absolute -top-12 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-[#2C2420] p-1.5 rounded-full z-50 shadow-2xl scale-[calc(1/var(--scale))]"
-                            style={{ "--scale": scale } as any}
+                            initial={{ opacity: 0, y: 10, scale: 0.7 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.7 }}
+                            className="absolute -top-16 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-[#2C2420] p-2 rounded-full z-50 shadow-2xl scale-[calc(1.1/var(--scale))]"
+                            style={{ "--scale": scale } as React.CSSProperties}
                           >
-                             <button onClick={(e) => { e.stopPropagation(); adjustScale(0.1); }} className="p-1.5 hover:bg-white/20 rounded-full text-white"><Maximize2 className="w-3.5 h-3.5" /></button>
-                             <button onClick={(e) => { e.stopPropagation(); adjustScale(-0.1); }} className="p-1.5 hover:bg-white/20 rounded-full text-white"><Minimize2 className="w-3.5 h-3.5" /></button>
-                             <button onClick={(e) => { e.stopPropagation(); adjustRotate(-15); }} className="p-1.5 hover:bg-white/20 rounded-full text-white"><RotateCcw className="w-3.5 h-3.5" /></button>
-                             <button onClick={(e) => { e.stopPropagation(); adjustRotate(15); }} className="p-1.5 hover:bg-white/20 rounded-full text-white"><RotateCw className="w-4 h-4 text-white" /></button>
-                             <button onClick={(e) => { e.stopPropagation(); handleBringToFront(); }} className="p-1.5 hover:bg-white/20 rounded-full text-white"><Layers className="w-3.5 h-3.5" /></button>
-                             <div className="w-px h-4 bg-white/10 mx-1" />
-                             <button onClick={(e) => { e.stopPropagation(); removeArrangedFlower(f.instanceId); setSelectedInstanceId(null); }} className="p-1.5 hover:bg-red-500 rounded-full text-white"><Trash2 className="w-3.5 h-3.5" /></button>
+                             <button onClick={(e) => { e.stopPropagation(); adjustScale(0.1); }} className="p-2 hover:bg-white/20 rounded-full text-white"><Maximize2 className="w-4 h-4" /></button>
+                             <button onClick={(e) => { e.stopPropagation(); adjustScale(-0.1); }} className="p-2 hover:bg-white/20 rounded-full text-white"><Minimize2 className="w-4 h-4" /></button>
+                             <button onClick={(e) => { e.stopPropagation(); adjustRotate(-15); }} className="p-2 hover:bg-white/20 rounded-full text-white"><RotateCcw className="w-4 h-4" /></button>
+                             <button onClick={(e) => { e.stopPropagation(); adjustRotate(15); }} className="p-2 hover:bg-white/20 rounded-full text-white"><RotateCw className="w-4 h-4" /></button>
+                             <button onClick={(e) => { e.stopPropagation(); handleBringToFront(); }} className="p-2 hover:bg-white/20 rounded-full text-white"><Layers className="w-4 h-4" /></button>
+                             <div className="w-px h-5 bg-white/10 mx-1" />
+                             <button onClick={(e) => { e.stopPropagation(); removeArrangedFlower(f.instanceId); setSelectedInstanceId(null); }} className="p-2 hover:bg-red-500 rounded-full text-white"><Trash2 className="w-4 h-4" /></button>
                           </motion.div>
                         )}
                       </AnimatePresence>
 
-                      <div className={`relative ${isSelected ? 'after:content-[""] after:absolute after:-inset-4 after:border-2 after:border-dashed after:border-[#C9848F]/50 after:rounded-[2rem]' : ''}`}>
+                      <div className={`relative ${isSelected ? 'after:content-[""] after:absolute after:-inset-4 after:border-2 after:border-dashed after:border-[#C9848F]/40 after:rounded-4xl' : ''}`}>
                         <Image
                           src={f.flower.image}
                           alt={f.flower.name}
@@ -359,41 +352,119 @@ export default function ArrangePage() {
                     </motion.div>
                   );
                 })}
-
-                 {/* Stems removed for creative freedom */}
              </div>
            </div>
         </div>
 
-        {/* Mobile Background Selection (Bottom) */}
-        <div className="lg:hidden w-full space-y-4 pt-4">
-           <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#A8B5A2] text-center">Background</p>
-           <div className="flex justify-center gap-3 overflow-x-auto pb-4 no-scrollbar">
-              {BACKGROUNDS.map((bg) => (
-                <button
-                  key={bg.id}
-                  onClick={() => setBackground(bg.value)}
-                  className={`min-w-[4rem] h-12 rounded-xl border-2 overflow-hidden relative ${
-                    background === bg.value ? "border-[#C9848F]" : "border-transparent"
-                  }`}
-                >
-                  <div className="absolute inset-0" style={{ backgroundColor: bg.value }} />
-                </button>
-              ))}
+        {/* Mobile Settings (Visible ONLY on Mobile) */}
+        <div className="lg:hidden w-full bg-white/60 backdrop-blur-xl rounded-4xl border border-white/60 p-4 pb-20 shadow-xl space-y-6">
+           <div className="flex items-center justify-between border-b border-[#2C2420]/5 pb-4">
+              <button 
+                onClick={() => setMobileTab('bg')}
+                className={`text-[10px] uppercase font-bold tracking-[0.2em] px-4 py-2 rounded-xl transition-all ${mobileTab === 'bg' ? 'bg-[#2C2420] text-white shadow-lg' : 'text-[#A8B5A2]'}`}
+              >
+                Background
+              </button>
+              <button 
+                onClick={() => setMobileTab('foliage')}
+                className={`text-[10px] uppercase font-bold tracking-[0.2em] px-4 py-2 rounded-xl transition-all ${mobileTab === 'foliage' ? 'bg-[#2C2420] text-white shadow-lg' : 'text-[#A8B5A2]'}`}
+              >
+                Foliage
+              </button>
+              <button 
+                onClick={() => setMobileTab('wrap')}
+                className={`text-[10px] uppercase font-bold tracking-[0.2em] px-4 py-2 rounded-xl transition-all ${mobileTab === 'wrap' ? 'bg-[#2C2420] text-white shadow-lg' : 'text-[#A8B5A2]'}`}
+              >
+                Wrap
+              </button>
+           </div>
+
+           <div className="min-h-[120px] max-h-[250px] overflow-y-auto no-scrollbar py-2">
+              <AnimatePresence mode="wait">
+                {mobileTab === 'bg' && (
+                  <motion.div 
+                    key="bg"
+                    initial={{ opacity: 0, x: -10 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="grid grid-cols-4 gap-3 px-2"
+                  >
+                    {BACKGROUNDS.map((bg) => (
+                      <button
+                        key={bg.id}
+                        onClick={() => setBackground(bg.value)}
+                        className={`h-12 rounded-xl border-2 transition-all overflow-hidden ${
+                          background === bg.value ? "border-[#C9848F] scale-95" : "border-white"
+                        }`}
+                      >
+                        <div className="w-full h-full" style={{ backgroundColor: bg.value }} />
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+
+                {mobileTab === 'foliage' && (
+                  <motion.div 
+                    key="foliage"
+                    initial={{ opacity: 0, x: -10 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="grid grid-cols-5 gap-3"
+                  >
+                    {FLOWERS.filter(f => f.tier === "foliage").map((foliage) => (
+                      <button
+                        key={foliage.id}
+                        onClick={() => addArrangedFlower(foliage)}
+                        className="aspect-square rounded-2xl bg-[#CCDCBA]/10 hover:bg-[#CCDCBA]/30 p-2 flex items-center justify-center border border-[#CCDCBA]/20 relative group"
+                      >
+                         <Image src={foliage.image} alt={foliage.name} width={45} height={45} className="object-contain" />
+                         <div className="absolute -bottom-0.5 -right-0.5 bg-[#A8B5A2] text-white p-0.5 rounded-full shadow-sm">
+                            <Plus className="w-2.5 h-2.5" />
+                         </div>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+
+                {mobileTab === 'wrap' && (
+                  <motion.div 
+                    key="wrap"
+                    initial={{ opacity: 0, x: -10 }} 
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="grid grid-cols-2 gap-3"
+                  >
+                    {WRAPS.map((w) => (
+                      <button
+                        key={w.id}
+                        onClick={() => setWrap(w.id)}
+                        className={`p-3 rounded-2xl border-2 transition-all flex items-center gap-3 ${
+                          wrap === w.id ? "border-[#C9848F] bg-[#C9848F]/5 scale-95" : "border-white bg-[#FAF7F2]/50"
+                        }`}
+                      >
+                        <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-black/5 bg-white flex items-center justify-center">
+                          {w.id !== 'none' ? <Image src={w.image} alt={w.name} width={40} height={40} className="object-cover" /> : <span className="text-[8px] italic opacity-40">None</span>}
+                        </div>
+                        <span className="text-[10px] font-bold text-[#2C2420]/60 uppercase tracking-wider truncate">{w.name}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
            </div>
         </div>
       </div>
 
       {/* Sticky Bottom Finalization */}
-      <div className="fixed bottom-8 left-4 right-4 z-50 md:left-auto md:right-auto">
-        <div className="max-w-md mx-auto bg-[#2C2420] text-white rounded-full p-2 pr-2 pl-8 shadow-2xl backdrop-blur-md flex items-center justify-between">
+      <div className="fixed bottom-6 left-4 right-4 z-60 md:left-auto md:right-auto md:translate-x-0">
+        <div className="max-w-md mx-auto bg-[#2C2420]/90 backdrop-blur-2xl text-white rounded-4xl p-2 pr-2 pl-8 shadow-2xl flex items-center justify-between border border-white/10">
           <div className="flex flex-col">
-            <span className="text-[9px] text-white/30 uppercase tracking-[0.2em] font-sans">Bouquet</span>
-            <span className="text-sm font-display italic leading-none">{arrangedFlowers.length} Blooms</span>
+            <span className="text-[10px] text-white/40 uppercase font-bold tracking-[0.2em] font-sans">Bouquet</span>
+            <span className="text-base font-display italic leading-none">{arrangedFlowers.length} Blooms</span>
           </div>
           <button 
             onClick={() => router.push("/message")}
-            className="flex items-center gap-4 bg-[#C9848F] px-8 py-3.5 rounded-full font-medium hover:bg-white hover:text-[#C9848F] transition-all duration-300 group shadow-lg"
+            className="flex items-center gap-4 bg-[#C9848F] px-8 py-4 rounded-full font-bold text-sm tracking-wide hover:bg-white hover:text-[#C9848F] transition-all duration-500 group shadow-xl active:scale-95"
           >
             Add a Note
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
