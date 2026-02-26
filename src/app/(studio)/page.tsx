@@ -3,7 +3,7 @@
 import Link from "next/link";
 import NextImage from "next/image";
 import { MoveRight, Heart, Music2, Share2, Sparkles, Send } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const STEPS = [
   { icon: "🌸", label: "Pick your flowers", sub: "8 botanical varieties" },
@@ -13,7 +13,7 @@ const STEPS = [
   { icon: "🔗", label: "Share the link", sub: "One link. One person." },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -24,7 +24,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
@@ -283,7 +283,7 @@ export default function Home() {
               Our Philosophy
             </div>
             <h2 className="font-display text-5xl md:text-7xl text-[#2C2420] italic leading-[1.1]">
-              "Flowers aren't just flowers. They are 'I thought about you' — made digital, made permanent."
+              &quot;Flowers aren&apos;t just flowers. They are &apos;I thought about you&apos; — made digital, made permanent.&quot;
             </h2>
             <div className="flex items-center justify-center gap-4 text-[#C9848F]">
               <div className="w-12 h-px bg-current opacity-20" />
