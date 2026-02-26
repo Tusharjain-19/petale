@@ -54,8 +54,30 @@ export const useBouquetStore = create<BouquetState>((set) => ({
 
   addFlower: (flower) =>
     set((state) => {
-      if (state.selectedFlowers.length >= 20) return state; // Increased limit for freedom
-      return { selectedFlowers: [...state.selectedFlowers, flower] };
+      if (state.selectedFlowers.length >= 20) return state;
+      const newSelected = [...state.selectedFlowers, flower];
+      
+      // If we already have an arrangement, add this flower to the canvas as well
+      if (state.arrangedFlowers.length > 0) {
+        const isFoliage = flower.tier === "foliage";
+        const newInstance: ArrangedFlower = {
+          instanceId: Math.random().toString(36).substr(2, 9),
+          flower,
+          x: 0,
+          y: 0,
+          scale: isFoliage ? 1.5 : 1,
+          rotation: 0,
+          zIndex: isFoliage ? 1 : Math.max(...state.arrangedFlowers.map(f => f.zIndex), 0) + 1,
+        };
+        
+        const newArranged = isFoliage
+          ? [newInstance, ...state.arrangedFlowers.map(f => ({ ...f, zIndex: f.zIndex + 1 }))]
+          : [...state.arrangedFlowers, newInstance];
+          
+        return { selectedFlowers: newSelected, arrangedFlowers: newArranged };
+      }
+      
+      return { selectedFlowers: newSelected };
     }),
 
   removeFlower: (id) =>
@@ -65,7 +87,19 @@ export const useBouquetStore = create<BouquetState>((set) => ({
       const actualIndex = state.selectedFlowers.length - 1 - index;
       const newSelected = [...state.selectedFlowers];
       newSelected.splice(actualIndex, 1);
-      return { selectedFlowers: newSelected };
+      
+      let newArranged = state.arrangedFlowers;
+      // If we have an arrangement, also remove the most recently added instance of this flower
+      if (state.arrangedFlowers.length > 0) {
+        const arrIndex = [...state.arrangedFlowers].reverse().findIndex(f => f.flower.id === id);
+        if (arrIndex !== -1) {
+          const actualArrIndex = state.arrangedFlowers.length - 1 - arrIndex;
+          newArranged = [...state.arrangedFlowers];
+          newArranged.splice(actualArrIndex, 1);
+        }
+      }
+      
+      return { selectedFlowers: newSelected, arrangedFlowers: newArranged };
     }),
 
   setArrangedFlowers: (flowers) => set({ arrangedFlowers: flowers }),

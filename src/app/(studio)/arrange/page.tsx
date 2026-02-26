@@ -333,16 +333,7 @@ export default function ArrangePage() {
                   );
                 })}
 
-                {/* Stems (Always back) */}
-                <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 pointer-events-none opacity-60 z-0 select-none">
-                  <Image 
-                    src="/stems-watercolor.png" 
-                    alt="Stems" 
-                    width={160} 
-                    height={160} 
-                    className="object-contain"
-                  />
-                </div>
+                 {/* Stems removed for creative freedom */}
              </div>
            </div>
         </div>
