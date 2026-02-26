@@ -39,7 +39,6 @@ export default function MessagePage() {
     songConfig.end ? secondsToMmss(songConfig.end) : ""
   );
   const [showEmbed, setShowEmbed] = useState(false);
-  const [customSlug, setCustomSlug] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -69,28 +68,24 @@ export default function MessagePage() {
     const { arrangedFlowers, background, wrap } = useBouquetStore.getState();
 
     try {
-      const res = await fetch("/api/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          arrangedFlowers,
-          message: internalMsg,
-          to,
-          from,
-          song: { url: spotifyUrl, start: startSec, end: endSec },
-          background,
-          wrap,
-          slug: customSlug || undefined,
-        }),
-      });
+      // Create a compact data object for URL encoding
+      const bouquetData = {
+        flowers: arrangedFlowers,
+        message: internalMsg,
+        to,
+        from,
+        song: { url: spotifyUrl, start: startSec, end: endSec },
+        background,
+        wrap,
+        createdAt: new Date().toISOString(),
+      };
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error ?? "Something went wrong.");
-      }
+      // Encode as Base64 (standard browser approach)
+      const jsonStr = JSON.stringify(bouquetData);
+      const encodedData = btoa(encodeURIComponent(jsonStr));
 
-      const { id } = await res.json();
-      router.push(`/to/${id}?created=true`);
+      // Redirect to the view page with the encoded data
+      router.push(`/to/view?d=${encodedData}&created=true`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Something went wrong.";
       setError(msg);
@@ -352,38 +347,7 @@ export default function MessagePage() {
           <div className="flex-1 h-px bg-[#2C2420]/10" />
         </div>
 
-        {/* Custom URL slug */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="custom-slug"
-            className="block text-xs tracking-widest uppercase text-[#A8B5A2]"
-            style={{ fontFamily: "var(--font-dm-sans)" }}
-          >
-            Custom Link{" "}
-            <span className="normal-case text-[#2C2420]/25">(optional)</span>
-          </label>
-          <div className="flex items-center gap-1 text-sm text-[#2C2420]/40">
-            <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-              petalé.app/to/
-            </span>
-            <input
-              id="custom-slug"
-              type="text"
-              value={customSlug}
-              onChange={(e) =>
-                setCustomSlug(
-                  e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")
-                )
-              }
-              placeholder="your-name"
-              maxLength={32}
-              className="flex-1 bg-transparent border-b border-[#2C2420]/15 pb-1 text-[#2C2420] placeholder-[#2C2420]/25 focus:outline-none focus:border-[#C9848F] transition-colors"
-              style={{ fontFamily: "var(--font-dm-sans)" }}
-            />
-          </div>
-        </div>
-
-        {/* Error */}
+        {/* Action buttons */}
         <AnimatePresence>
           {error && (
             <motion.p
