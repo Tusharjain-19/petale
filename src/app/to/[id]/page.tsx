@@ -39,8 +39,26 @@ export default function RecipientPage() {
 
   const isCreated = searchParams.get("created") === "true";
 
+  interface Petal {
+    x: string;
+    scale: number;
+    duration: number;
+    delay: number;
+    emoji: string;
+  }
+  const [petals, setPetals] = useState<Petal[]>([]);
+
   useEffect(() => {
     setIsClient(true);
+    // Generate petals only on client to satisfy purity rules
+    const newPetals = Array.from({ length: 12 }).map(() => ({
+      x: `${Math.random() * 100}%`,
+      scale: 0.5 + Math.random() * 0.5,
+      duration: 7 + Math.random() * 8,
+      delay: Math.random() * 10,
+      emoji: ["🌸", "🌺", "🍃", "✿"][Math.floor(Math.random() * 4)]
+    }));
+    setPetals(newPetals);
     if (!params?.id) return;
     
     fetch(`/api/create?id=${params.id}`)
@@ -128,15 +146,15 @@ export default function RecipientPage() {
       {/* ── Falling Petals (Client Only) ── */}
       {isClient && (
         <div className="fixed inset-0 pointer-events-none z-0">
-          {Array.from({ length: 12 }).map((_, i) => (
+          {petals.map((petal, i) => (
             <motion.div
               key={i}
               initial={{ 
                 y: -100, 
-                x: `${Math.random() * 100}%`, 
+                x: petal.x, 
                 rotate: 0, 
                 opacity: 0,
-                scale: 0.5 + Math.random() * 0.5
+                scale: petal.scale
               }}
               animate={{ 
                 y: "110vh", 
@@ -144,15 +162,15 @@ export default function RecipientPage() {
                 opacity: [0, 0.7, 0.7, 0] 
               }}
               transition={{
-                duration: 7 + Math.random() * 8,
+                duration: petal.duration,
                 repeat: Infinity,
-                delay: Math.random() * 10,
+                delay: petal.delay,
                 ease: "linear"
               }}
               className="absolute text-xl"
             >
               <span className="opacity-40">
-                {["🌸", "🌺", "🍃", "✿"][Math.floor(Math.random() * 4)]}
+                {petal.emoji}
               </span>
             </motion.div>
           ))}
@@ -174,7 +192,7 @@ export default function RecipientPage() {
               <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="absolute top-8 bg-white/80 backdrop-blur-xl px-4 py-3 md:px-6 md:py-4 rounded-[2rem] shadow-2xl border border-white/40 flex items-center gap-4 z-50"
+                className="absolute top-8 bg-white/80 backdrop-blur-xl px-4 py-3 md:px-6 md:py-4 rounded-4xl shadow-2xl border border-white/40 flex items-center gap-4 z-50"
               >
                 <div className="text-left">
                   <p className="font-display text-[#2C2420] italic text-lg leading-none">Bouquet Ready! 🎀</p>
@@ -234,7 +252,7 @@ export default function RecipientPage() {
                 onClick={handleOpen}
                 className="group relative flex items-center gap-4 mx-auto bg-[#2C2420] text-white px-12 py-6 rounded-full text-xl font-medium transition-all duration-500 hover:scale-105 active:scale-95 shadow-[0_25px_60px_-15px_rgba(44,36,32,0.5)] overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#C9848F] to-[#F2C4CE] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-linear-to-r from-[#C9848F] to-[#F2C4CE] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <span className="relative z-10">Open Your Bouquet</span>
                 <motion.div
                   animate={{ scale: [1, 1.3, 1] }}
@@ -278,6 +296,7 @@ export default function RecipientPage() {
                 className="relative w-full h-full flex items-center justify-center"
               >
                 {/* Bouquet Wrap */}
+                {/* Bouquet Wrap Back Layer */}
                 <AnimatePresence>
                   {wrapData && wrapData.id !== 'none' && (
                     <motion.div
@@ -288,7 +307,7 @@ export default function RecipientPage() {
                     >
                       <Image 
                         src={wrapData.image} 
-                        alt="Wrap" 
+                        alt="Wrap Back" 
                         fill
                         className="object-contain"
                         priority
@@ -297,18 +316,35 @@ export default function RecipientPage() {
                   )}
                 </AnimatePresence>
 
-                {/* Stems Layer */}
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 15 }}
-                  transition={{ delay: 1, duration: 1.5 }}
-                  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1] w-48 h-48 opacity-70"
-                >
-                  <Image src="/stems-watercolor.png" alt="Stems" fill className="object-contain" />
-                </motion.div>
+                {/* Bouquet Wrap Front Layer (3D Effect) */}
+                <AnimatePresence>
+                  {wrapData && wrapData.id !== 'none' && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1.15 }}
+                      transition={{ delay: 1.2, duration: 1.5 }}
+                      style={{ 
+                        zIndex: 40, 
+                        maskImage: 'linear-gradient(to top, black 40%, transparent 65%)',
+                        WebkitMaskImage: 'linear-gradient(to top, black 40%, transparent 65%)'
+                      }}
+                      className="absolute inset-0 pointer-events-none flex items-center justify-center"
+                    >
+                      <Image 
+                        src={wrapData.image} 
+                        alt="Wrap Front" 
+                        fill
+                        className="object-contain"
+                        priority
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Stems removed for creative freedom */}
 
                 {/* Flowers Layer */}
-                <div className="absolute inset-0 flex items-center justify-center z-[2]">
+                <div className="absolute inset-0 flex items-center justify-center z-2">
                   {data.flowers.map((f, i) => (
                     <motion.div
                       key={`${f.flower.id}-${i}`}
@@ -328,23 +364,13 @@ export default function RecipientPage() {
                         zIndex: (f.zIndex || 10) + 10,
                       }}
                     >
-                      <motion.div
-                        animate={{ 
-                          y: [0, -8, 0],
-                          rotate: [f.rotation, f.rotation + 1.5, f.rotation - 1.5, f.rotation]
-                        }}
-                        transition={{
-                          duration: 4 + i * 0.4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      >
+                      <motion.div>
                         <Image
                           src={f.flower.image}
                           alt={f.flower.name}
                           width={150}
                           height={180}
-                          className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.1)]"
+                          className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
                         />
                       </motion.div>
                     </motion.div>
@@ -387,7 +413,7 @@ export default function RecipientPage() {
                 transition={{ delay: 4, duration: 1 }}
                 className="mt-12 w-full max-w-sm"
               >
-                <div className="bg-white/50 backdrop-blur-xl rounded-[2rem] p-6 flex items-center gap-5 border border-white/60 shadow-xl shadow-[#C9848F]/5">
+                <div className="bg-white/50 backdrop-blur-xl rounded-4xl p-6 flex items-center gap-5 border border-white/60 shadow-xl shadow-[#C9848F]/5">
                    <div className="w-14 h-14 bg-[#2C2420] rounded-2xl flex items-center justify-center text-[#F2C4CE] shadow-inner relative overflow-hidden group">
                       <Music className="w-7 h-7 relative z-10 animate-pulse" />
                       <motion.div 
@@ -408,10 +434,11 @@ export default function RecipientPage() {
                    <div className="hidden">
                       <iframe
                         ref={audioRef}
-                        src={`https://open.spotify.com/embed/track/${trackId}?utm_source=generator&t=${data.song.start}`}
-                        width="0"
-                        height="0"
-                        allow="autoplay; encrypted-media"
+                        src={`https://open.spotify.com/embed/track/${trackId}?utm_source=generator&t=${data.song.start}&autoplay=1`}
+                        width="100%"
+                        height="100%"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        className="absolute inset-0 opacity-0 pointer-events-none"
                       />
                    </div>
                    

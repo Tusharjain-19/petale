@@ -248,6 +248,7 @@ export default function ArrangePage() {
                 style={{ transform: `scale(${scale})` }}
              >
                 {/* Bouquet Wrap Layer (Back) */}
+                {/* Bouquet Wrap Back Layer */}
                 <AnimatePresence>
                   {wrap !== "none" && (
                     <motion.div
@@ -258,7 +259,33 @@ export default function ArrangePage() {
                     >
                       <Image 
                         src={WRAPS.find(w => w.id === wrap)?.image || ""} 
-                        alt="Wrap" 
+                        alt="Wrap Back" 
+                        width={500} 
+                        height={500} 
+                        className="object-contain opacity-100"
+                        priority
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Bouquet Wrap Front Layer (3D Effect) */}
+                <AnimatePresence>
+                  {wrap !== "none" && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      animate={{ opacity: 1, scale: 1.1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      style={{ 
+                        zIndex: 40, 
+                        maskImage: 'linear-gradient(to top, black 40%, transparent 65%)',
+                        WebkitMaskImage: 'linear-gradient(to top, black 40%, transparent 65%)'
+                      }}
+                      className="absolute inset-0 pointer-events-none flex items-center justify-center p-0"
+                    >
+                      <Image 
+                        src={WRAPS.find(w => w.id === wrap)?.image || ""} 
+                        alt="Wrap Front" 
                         width={500} 
                         height={500} 
                         className="object-contain opacity-100"
@@ -325,7 +352,7 @@ export default function ArrangePage() {
                           alt={f.flower.name}
                           width={180}
                           height={220}
-                          className="object-contain pointer-events-none drop-shadow-md"
+                          className="object-contain pointer-events-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.15)]"
                           priority
                         />
                       </div>
