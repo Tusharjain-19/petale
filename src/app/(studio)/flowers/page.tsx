@@ -16,8 +16,10 @@ export default function FlowersPage() {
 
   const filteredFlowers = useMemo(() => {
     return FLOWERS.filter(f => 
-      f.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      f.meaning.toLowerCase().includes(searchTerm.toLowerCase())
+      f.tier !== "foliage" && (
+        f.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        f.meaning.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
   }, [searchTerm]);
 
@@ -161,25 +163,25 @@ export default function FlowersPage() {
                   <div className="hidden sm:block">
                     <p className="text-[10px] font-semibold tracking-widest uppercase text-white/40">Bouquet</p>
                     <p className="text-sm font-display italic">
-                      {selectedFlowers.length < 3 
-                        ? `Add ${3 - selectedFlowers.length} more` 
+                      {selectedFlowers.length < 1 
+                        ? `Pick a flower` 
                         : "Ready to arrange"
                       }
                     </p>
                   </div>
                </div>
                
-               <button
+                <button
                  onClick={() => router.push("/arrange")}
-                 disabled={selectedFlowers.length < 3}
+                 disabled={selectedFlowers.length < 1}
                  className={`flex items-center gap-3 px-6 sm:px-10 py-3 rounded-full font-medium transition-all duration-300 group ${
-                   selectedFlowers.length >= 3 
+                   selectedFlowers.length >= 1 
                      ? "bg-[#C9848F] hover:bg-white hover:text-[#C9848F]" 
                      : "bg-white/10 text-white/20 cursor-not-allowed opacity-50"
                  }`}
                >
                  Arrange
-                 <ArrowRight className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${selectedFlowers.length >= 3 ? '' : 'hidden'}`} />
+                 <ArrowRight className={`w-4 h-4 transition-transform group-hover:translate-x-1 ${selectedFlowers.length >= 1 ? '' : 'hidden'}`} />
                </button>
             </div>
           </motion.div>

@@ -9,9 +9,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { arrangedFlowers, message, to, from, song, background, slug, wrap } = body;
 
-    if (!arrangedFlowers || arrangedFlowers.length < 3) {
+    if (!arrangedFlowers || arrangedFlowers.length < 1) {
       return NextResponse.json(
-        { error: "Please select at least 3 flowers." },
+        { error: "Please select at least 1 flower." },
         { status: 400 }
       );
     }

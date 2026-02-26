@@ -196,6 +196,12 @@ export const WRAPS: Wrap[] = [
     image: "/wraps/black-matte.png",
     swatchColor: "#2C2420",
   },
+  {
+    id: "sage-green",
+    name: "Sage Green Wrap",
+    image: "/wraps/sage-green.png",
+    swatchColor: "#A8B5A2",
+  },
 ];
 
 export const BACKGROUNDS = [

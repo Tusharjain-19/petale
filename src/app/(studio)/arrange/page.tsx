@@ -52,10 +52,10 @@ export default function ArrangePage() {
   }, []);
 
   useEffect(() => {
-    if (selectedFlowers.length >= 3 && arrangedFlowers.length === 0) {
+    if (selectedFlowers.length >= 1 && arrangedFlowers.length === 0) {
       const initial = arrangeInitialBouquet(selectedFlowers);
       setArrangedFlowers(initial);
-    } else if (selectedFlowers.length < 3 && arrangedFlowers.length === 0) {
+    } else if (selectedFlowers.length < 1 && arrangedFlowers.length === 0) {
       router.replace("/flowers");
     }
   }, [selectedFlowers, arrangedFlowers, setArrangedFlowers, router]);
