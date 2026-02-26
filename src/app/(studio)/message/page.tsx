@@ -66,7 +66,7 @@ export default function MessagePage() {
     setMessage(internalMsg);
     setSong({ url: spotifyUrl, start: startSec, end: endSec });
 
-    const { arrangedFlowers, background } = useBouquetStore.getState();
+    const { arrangedFlowers, background, wrap } = useBouquetStore.getState();
 
     try {
       const res = await fetch("/api/create", {
@@ -79,6 +79,7 @@ export default function MessagePage() {
           from,
           song: { url: spotifyUrl, start: startSec, end: endSec },
           background,
+          wrap,
           slug: customSlug || undefined,
         }),
       });

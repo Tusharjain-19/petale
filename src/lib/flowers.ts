@@ -167,6 +167,28 @@ export const FLOWERS: Flower[] = [
   },
 ];
 
+export interface Wrap {
+  id: string;
+  name: string;
+  image: string;
+  swatchColor: string;
+}
+
+export const WRAPS: Wrap[] = [
+  {
+    id: "none",
+    name: "No Wrap",
+    image: "",
+    swatchColor: "transparent",
+  },
+  {
+    id: "matte-black",
+    name: "Matte Black",
+    image: "/wraps/black-matte.png",
+    swatchColor: "#2C2420",
+  },
+];
+
 export const BACKGROUNDS = [
   { id: "cream", value: "#FAF7F2", label: "Paper Cream" },
   { id: "blush", value: "#F2C4CE", label: "Soft Blush" },

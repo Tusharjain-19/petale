@@ -7,7 +7,7 @@ export const bouquetStore = new Map<string, Record<string, unknown>>();
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { arrangedFlowers, message, to, from, song, background, slug } = body;
+    const { arrangedFlowers, message, to, from, song, background, slug, wrap } = body;
 
     if (!arrangedFlowers || arrangedFlowers.length < 3) {
       return NextResponse.json(
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       from: from || "",
       song: song || { url: "", start: 0, end: 0 },
       background: background || "#FAF7F2",
+      wrap: wrap || "none",
       createdAt: new Date().toISOString(),
     };
 

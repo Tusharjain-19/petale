@@ -11,11 +11,12 @@ import {
   Maximize2, 
   Minimize2,
   Layers,
-  RotateCw
+  RotateCw,
+  Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBouquetStore, type ArrangedFlower } from "../../../store/useBouquetStore";
-import { BACKGROUNDS, FLOWERS, arrangeInitialBouquet } from "@/lib/flowers";
+import { BACKGROUNDS, FLOWERS, WRAPS, arrangeInitialBouquet } from "@/lib/flowers";
 
 export default function ArrangePage() {
   const router = useRouter();
@@ -27,7 +28,9 @@ export default function ArrangePage() {
     setArrangedFlowers,
     updateFlowerTransform,
     removeArrangedFlower,
-    setBackground 
+    setBackground,
+    wrap,
+    setWrap
   } = useBouquetStore();
 
 
@@ -166,12 +169,12 @@ export default function ArrangePage() {
 
             <div className="space-y-4">
               <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#A8B5A2]">Background</h3>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {BACKGROUNDS.map((bg) => (
                   <button
                     key={bg.id}
                     onClick={() => setBackground(bg.value)}
-                    className={`h-10 rounded-xl transition-all border-2 overflow-hidden relative ${
+                    className={`h-8 rounded-xl transition-all border-2 overflow-hidden relative ${
                       background === bg.value ? "border-[#C9848F] scale-95" : "border-transparent opacity-80"
                     }`}
                   >
@@ -179,6 +182,38 @@ export default function ArrangePage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#A8B5A2]">Bouquet Wrap</h3>
+                <Sparkles className="w-3 h-3 text-[#C9848F]" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {WRAPS.map((w) => (
+                  <button
+                    key={w.id}
+                    onClick={() => setWrap(w.id)}
+                    className={`px-3 py-2.5 rounded-2xl text-[10px] font-medium transition-all border-2 flex flex-col items-center gap-2 ${
+                      wrap === w.id 
+                        ? "border-[#C9848F] bg-[#C9848F]/5 text-[#C9848F]" 
+                        : "border-transparent bg-[#FAF7F2] text-[#2C2420]/50 hover:bg-[#F2C4CE]/10"
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg overflow-hidden border border-black/5 ${w.id === 'none' ? 'bg-white flex items-center justify-center italic text-[8px]' : ''}`}>
+                      {w.id !== 'none' ? (
+                        <Image src={w.image} alt={w.name} width={32} height={32} className="object-cover" />
+                      ) : (
+                        "None"
+                      )}
+                    </div>
+                    {w.name}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[9px] text-[#2C2420]/30 italic leading-tight">
+                Premium matte wrap frames your bouquet for a luxury finish.
+              </p>
             </div>
           </div>
         </div>
@@ -212,6 +247,26 @@ export default function ArrangePage() {
                 className="relative w-[500px] h-[500px]"
                 style={{ transform: `scale(${scale})` }}
              >
+                {/* Bouquet Wrap Layer (Back) */}
+                <AnimatePresence>
+                  {wrap !== "none" && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      animate={{ opacity: 1, scale: 1.1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center p-0"
+                    >
+                      <Image 
+                        src={WRAPS.find(w => w.id === wrap)?.image || ""} 
+                        alt="Wrap" 
+                        width={500} 
+                        height={500} 
+                        className="object-contain opacity-100"
+                        priority
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 {/* Guide Text */}
                 <p className="absolute -top-12 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-widest text-[#2C2420]/30 font-sans whitespace-nowrap">
                    Drag to move • Tap to edit
@@ -279,12 +334,14 @@ export default function ArrangePage() {
                 })}
 
                 {/* Stems (Always back) */}
-                <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 pointer-events-none opacity-30 z-0">
-                  <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
-                    <path d="M40 0 Q60 50 60 100" stroke="#7a9e7e" strokeWidth="4" strokeLinecap="round"/>
-                    <path d="M60 0 Q60 50 60 100" stroke="#6b8f6b" strokeWidth="5" strokeLinecap="round"/>
-                    <path d="M80 0 Q60 50 60 100" stroke="#7a9e7e" strokeWidth="4" strokeLinecap="round"/>
-                  </svg>
+                <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 pointer-events-none opacity-60 z-0 select-none">
+                  <Image 
+                    src="/stems-watercolor.png" 
+                    alt="Stems" 
+                    width={160} 
+                    height={160} 
+                    className="object-contain"
+                  />
                 </div>
              </div>
            </div>

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { type Flower } from "@/lib/flowers";
+import { type Flower, type Wrap } from "@/lib/flowers";
 
 export interface ArrangedFlower {
   instanceId: string;
@@ -23,6 +23,7 @@ interface BouquetState {
     end: number;
   };
   background: string;
+  wrap: string;
 
   // Actions
   addFlower: (flower: Flower) => void;
@@ -36,6 +37,7 @@ interface BouquetState {
   setMessage: (msg: string) => void;
   setSong: (config: { url: string; start: number; end: number }) => void;
   setBackground: (bg: string) => void;
+  setWrap: (wrapId: string) => void;
   setNames: (to: string, from: string) => void;
   clearBouquet: () => void;
 }
@@ -48,6 +50,7 @@ export const useBouquetStore = create<BouquetState>((set) => ({
   from: "",
   songConfig: { url: "", start: 0, end: 0 },
   background: "#FAF7F2", // Default cream
+  wrap: "none",
 
   addFlower: (flower) =>
     set((state) => {
@@ -102,6 +105,7 @@ export const useBouquetStore = create<BouquetState>((set) => ({
   setMessage: (msg) => set({ message: msg }),
   setSong: (config) => set({ songConfig: config }),
   setBackground: (bg) => set({ background: bg }),
+  setWrap: (wrapId) => set({ wrap: wrapId }),
   setNames: (to, from) => set({ to, from }),
   clearBouquet: () =>
     set({
@@ -112,5 +116,6 @@ export const useBouquetStore = create<BouquetState>((set) => ({
       from: "",
       songConfig: { url: "", start: 0, end: 0 },
       background: "#FAF7F2",
+      wrap: "none",
     }),
 }));

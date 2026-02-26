@@ -4,19 +4,19 @@
   --font-display: var(--font-cormorant);
   --font-sans: var(--font-dm-sans);
 
-  --color-cream: #FAF7F2;
-  --color-blush: #F2C4CE;
-  --color-sage: #A8B5A2;
-  --color-dusty-rose: #C9848F;
-  --color-deep: #2C2420;
-  --color-white-soft: #FFFEF9;
+  --color-cream: #faf7f2;
+  --color-blush: #f2c4ce;
+  --color-sage: #a8b5a2;
+  --color-dusty-rose: #c9848f;
+  --color-deep: #2c2420;
+  --color-white-soft: #fffef9;
 
   --shadow-soft: 0 20px 40px -20px rgba(44, 36, 32, 0.1);
 }
 
 :root {
-  --background: #FAF7F2;
-  --foreground: #2C2420;
+  --background: #faf7f2;
+  --foreground: #2c2420;
 }
 
 body {
@@ -26,20 +26,67 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .font-display {
+h1,
+h2,
+h3,
+h4,
+.font-display {
   font-family: var(--font-cormorant), serif;
 }
 
-/* Paper Texture overlay */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.03;
-  z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3");
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #faf7f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #f2c4ce;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c9848f;
+}
+
+/* Premium Utilities */
+.text-shine {
+  background: linear-gradient(
+    to right,
+    #2c2420 20%,
+    #c9848f 40%,
+    #c9848f 60%,
+    #2c2420 80%
+  );
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }

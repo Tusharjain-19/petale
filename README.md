@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌸 Petalé — Digital Flower Bouquet Gifts
 
-## Getting Started
+<div align="center">
+  <img src="./petale_banner.png" alt="Petalé Banner" width="100%" />
+  
+  <p align="center">
+    <strong>Express your emotions through a beautifully crafted digital bouquet.</strong>
+    <br />
+    Pick, arrange, and share a personalized floral experience with your favorite music.
+  </p>
 
-First, run the development server:
+  <p align="center">
+    <a href="#-features">Features</a> •
+    <a href="#-tech-stack">Tech Stack</a> •
+    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-design-aesthetic">Design</a>
+  </p>
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Petalé** is a premium digital experience designed for thoughtful gifting. It allows users to curate a unique collection of watercolor-style flowers, arrange them into a stunning bouquet, and pair the visual gift with a personal note and a specific musical moment from Spotify.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Whether it's for a birthday, anniversary, or "just because," Petalé makes digital gifting feel personal, elegant, and memorable.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **🌸 Watercolor Curation**: Select from 8 handpicked watercolor-style flowers, each with its own symbolic meaning.
+- **💐 Dynamic Arrangement**: A custom algorithm that layers and arranges your flowers into a professional-looking bouquet.
+- **🎵 Musical Moments**: Integrate any Spotify track and set precise start/end timestamps to play your favorite "moment."
+- **✍️ Heartfelt Notes**: Add a personal message to your recipient with custom "To" and "From" fields.
+- **📱 Responsive Reveal**: A beautiful, mobile-first recipient experience with staggered flower animations and auto-playing music.
+- **🔗 Instant Sharing**: Generate a unique link via NanoID to share your creation across WhatsApp, Instagram, or Email.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🛠 Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **State Management**: [Zustand](https://zustand-demo.pmnd.rs/)
+- **Type Safety**: [TypeScript](https://www.typescriptlang.org/)
+- **Utility**: [NanoID](https://github.com/ai/nanoid), [clsx](https://github.com/lukeed/clsx), [tailwind-merge](https://github.com/dcastil/tailwind-merge)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm / yarn / pnpm
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/Tusharjain-19/petale.git
+   cd petale
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 🎨 Design Aesthetic
+
+Petalé follows a strict "Non-Negotiable" design system:
+
+- **Palette**: Soft Creams (`#FAF7F2`), Blush Pinks (`#F2C4CE`), and Sage Greens (`#A8B5A2`).
+- **Typography**: Editorial-style **Cormorant Garamond** for headers and **DM Sans** for body text.
+- **Feel**: Muted, editorial, soft shadows, and generous white space. No harsh borders or bright neon colors.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for new flowers, features, or themes, feel free to open an issue or submit a pull request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for special moments.</p>
+</div>
