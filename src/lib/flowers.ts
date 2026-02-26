@@ -55,6 +55,15 @@ export const FLOWERS: Flower[] = [
     swatchColor: "#b5c4b5",
     tier: "foliage",
   },
+  {
+    id: "foliage-6",
+    name: "More Matter",
+    color: "Sage Green",
+    meaning: "Density",
+    image: "/flowers/more-matter.png",
+    swatchColor: "#8fa38f",
+    tier: "foliage",
+  },
 
   // ── MAIN FLOWERS ──
   {

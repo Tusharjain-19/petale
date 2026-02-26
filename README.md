@@ -29,7 +29,8 @@ Whether it's for a birthday, anniversary, or "just because," Petalé makes digit
 
 ## ✨ Features
 
-- **🌸 Watercolor Curation**: Select from 8 handpicked watercolor-style flowers, each with its own symbolic meaning.
+- **🌸 Main Flowers**: Select from 12+ vibrant watercolor flowers like Roses, Lilies, and Sunflowers, each with unique symbolism.
+- **🌿 Foliage & Fillers**: Enhance your bouquet with 6+ botanical accents including Sage Spray, Eucalyptus, and "More Matter" for a professional finish.
 - **💐 Dynamic Arrangement**: A custom algorithm that layers and arranges your flowers into a professional-looking bouquet.
 - **🎵 Musical Moments**: Integrate any Spotify track and set precise start/end timestamps to play your favorite "moment."
 - **✍️ Heartfelt Notes**: Add a personal message to your recipient with custom "To" and "From" fields.
