@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
-
-// In-memory store for development. Replace with Supabase for production.
-export const bouquetStore = new Map<string, Record<string, unknown>>();
+import { bouquetStore } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const data = {
       id,
-      flowers: arrangedFlowers, // Renaming key for clarity in storage
+      flowers: arrangedFlowers,
       message,
       to: to || "",
       from: from || "",
@@ -46,7 +44,8 @@ export async function POST(req: NextRequest) {
     bouquetStore.set(id, data);
 
     return NextResponse.json({ id }, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error("API error:", err);
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }
