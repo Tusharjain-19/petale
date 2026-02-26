@@ -68,24 +68,29 @@ export default function MessagePage() {
     const { arrangedFlowers, background, wrap } = useBouquetStore.getState();
 
     try {
-      // Create a compact data object for URL encoding
+      // Create an optimized data object to keep URL length short
       const bouquetData = {
-        flowers: arrangedFlowers,
-        message: internalMsg,
-        to,
-        from,
-        song: { url: spotifyUrl, start: startSec, end: endSec },
-        background,
-        wrap,
-        createdAt: new Date().toISOString(),
+        f: arrangedFlowers.map(f => ({
+          i: f.flower.id,
+          x: Math.round(f.x),
+          y: Math.round(f.y),
+          s: Number(f.scale.toFixed(2)),
+          r: Math.round(f.rotation),
+          z: f.zIndex
+        })),
+        m: internalMsg,
+        t: to,
+        fr: from,
+        s: { u: spotifyUrl, st: startSec, en: endSec },
+        b: background,
+        w: wrap,
       };
 
-      // Encode as Base64 (standard browser approach)
       const jsonStr = JSON.stringify(bouquetData);
       const encodedData = btoa(encodeURIComponent(jsonStr));
 
       // Redirect to the view page with the encoded data
-      router.push(`/to/view?d=${encodedData}&created=true`);
+      router.push(`/to/view?d=${encodeURIComponent(encodedData)}&created=true`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Something went wrong.";
       setError(msg);

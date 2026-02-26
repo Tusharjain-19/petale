@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Share2, Check, Copy, Music, Sparkles } from "lucide-react";
 import { type ArrangedFlower } from "@/store/useBouquetStore";
-import { WRAPS } from "@/lib/flowers";
+import { WRAPS, FLOWERS } from "@/lib/flowers";
 import Link from "next/link";
 
 interface BouquetData {
@@ -65,9 +65,40 @@ function RecipientPageContent() {
     }
 
     try {
-      const decodedData = decodeURIComponent(atob(encodedData));
-      const parsed = JSON.parse(decodedData);
-      setData(parsed);
+      // Decode the data
+      const base64 = encodedData.replace(/ /g, "+");
+      const decodedData = decodeURIComponent(atob(base64));
+      const raw = JSON.parse(decodedData);
+
+      // Reconstruct optimized format back to full interface
+      const reconstructed: BouquetData = {
+        flowers: (raw.f || []).map((item: { i: string; x: number; y: number; s: number; r: number; z: number }) => {
+          const flowerBase = FLOWERS.find(fl => fl.id === item.i);
+          if (!flowerBase) return null;
+          return {
+            instanceId: Math.random().toString(36),
+            flower: flowerBase,
+            x: item.x,
+            y: item.y,
+            scale: item.s,
+            rotation: item.r,
+            zIndex: item.z
+          };
+        }).filter(Boolean),
+        message: raw.m || "",
+        to: raw.t || "",
+        from: raw.fr || "",
+        song: { 
+          url: raw.s?.u || "", 
+          start: raw.s?.st || 0, 
+          end: raw.s?.en || 0 
+        },
+        background: raw.b || "#FAF7F2",
+        wrap: raw.w || "none",
+        createdAt: new Date().toISOString()
+      };
+
+      setData(reconstructed);
       setNotFound(false);
     } catch (err) {
       console.error("Decoding error:", err);
