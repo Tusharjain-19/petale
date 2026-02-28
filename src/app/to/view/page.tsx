@@ -81,7 +81,13 @@ function RecipientPageContent() {
     try {
       // Decode the data
       const base64 = encodedData.replace(/ /g, "+");
-      const decodedData = decodeURIComponent(atob(base64));
+      // Use a more robust way to decode base64 that handles UTF-8
+      const binaryString = atob(base64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const decodedData = new TextDecoder().decode(bytes);
       const raw = JSON.parse(decodedData);
 
       // Reconstruct optimized format back to full interface

@@ -87,7 +87,13 @@ export default function MessagePage() {
       };
 
       const jsonStr = JSON.stringify(bouquetData);
-      const encodedData = btoa(encodeURIComponent(jsonStr));
+      // Robust way to encode UTF-8 to base64
+      const bytes = new TextEncoder().encode(jsonStr);
+      let binary = "";
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      const encodedData = btoa(binary);
 
       // Redirect to the view page with the encoded data
       router.push(`/to/view?d=${encodeURIComponent(encodedData)}&created=true`);
