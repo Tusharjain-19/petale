@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Share2, Check, Copy, Music, Sparkles } from "lucide-react";
+import { Heart, Share2, Check, Copy, Music } from "lucide-react";
 import { type ArrangedFlower } from "@/store/useBouquetStore";
 import { WRAPS, FLOWERS } from "@/lib/flowers";
 import Link from "next/link";
@@ -45,6 +45,20 @@ function RecipientPageContent() {
     emoji: string;
   }
   const [petals, setPetals] = useState<Petal[]>([]);
+  const [scale, setScale] = useState(1);
+
+  // Responsive scale for the bouquet to match studio arrangement
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) setScale(0.65);
+      else if (width < 1024) setScale(0.85);
+      else setScale(1);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -296,12 +310,12 @@ function RecipientPageContent() {
                 )}
              </div>
 
-            <div className="relative w-full max-w-lg aspect-square flex items-center justify-center mb-16 px-6">
+            <div className="relative w-full flex items-center justify-center mb-16 h-[500px]">
               <motion.div
-                initial={{ scale: 0.9, y: 150, opacity: 0 }}
-                animate={{ scale: 1, y: 0, opacity: 1 }}
+                initial={{ scale: scale * 0.9, y: 150, opacity: 0 }}
+                animate={{ scale: scale, y: 0, opacity: 1 }}
                 transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-full h-full flex items-center justify-center"
+                className="relative w-[500px] h-[500px] flex items-center justify-center"
               >
                 {wrapData && wrapData.id !== 'none' && (
                   <>
@@ -319,14 +333,31 @@ function RecipientPageContent() {
                 )}
 
                 <div className="absolute inset-0 flex items-center justify-center z-2">
-                  {data.flowers.map((f, i) => (
+                  {data.flowers.sort((a,b) => (a.zIndex || 0) - (b.zIndex || 0)).map((f, i) => (
                     <motion.div
                       key={i}
-                      initial={{ opacity: 0, scale: 0, y: 100 }}
+                      initial={{ opacity: 0, scale: 0, y: f.y + 100, x: f.x }}
                       animate={{ opacity: 1, scale: f.scale, y: f.y, x: f.x, rotate: f.rotation }}
-                      style={{ position: "absolute", zIndex: (f.zIndex || 10) + 10 }}
+                      transition={{ 
+                        duration: 1.2, 
+                        delay: 0.5 + (i * 0.1),
+                        ease: [0.16, 1, 0.3, 1]
+                      }}
+                      style={{ 
+                        position: "absolute", 
+                        left: "50%",
+                        top: "50%",
+                        zIndex: (f.zIndex || 10) + 10,
+                        transformOrigin: "center center"
+                      }}
                     >
-                        <Image src={f.flower.image} alt={f.flower.name} width={150} height={180} className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]" />
+                        <Image 
+                          src={f.flower.image} 
+                          alt={f.flower.name} 
+                          width={180} 
+                          height={220} 
+                          className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)]" 
+                        />
                     </motion.div>
                   ))}
                 </div>
